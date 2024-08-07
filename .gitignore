@@ -1,0 +1,14 @@
+# Node modules for both backend and frontend
+
+/frontend/node_modules
+node_modules
+
+# .env files
+/backend/.env
+/frontend/.env
+
+# Other files to ignore
+/package-lock.json
+/yarn.lock
+/Dockerfile
+/docker-compose.yml

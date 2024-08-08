@@ -43,8 +43,16 @@ export const blockUser = async (req, res) => {
 
 
 export const unblockUser= async (req,res)=>{
-    const { id, block_reason, blocked_by }=req.body;
-    console.log(req.body)
+
+    await check('id').run(req);
+    await check('block_reason').run(req);
+    await check('blocked_by').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+
+    const { id, block_reason, blocked_by } = req.body;
     const block_date=Date.now();
     const block_status= false;
     try {

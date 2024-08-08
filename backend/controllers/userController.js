@@ -1,11 +1,24 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { check, validationResult } from 'express-validator';
 import User from '../models/User.js';
 import {uploadProfileImage} from "../config/multer-config.js"
 import mongoose from 'mongoose';
 import { deleteFile } from '../utils/fileDelete.js';
 
 export const registerUser =async (req, res) => {
+  
+
+    await check('name').isLength({ min: 5,max:10 }).run(req);
+    await check('email').isEmail().run(req);
+    await check('password').isLength({ min: 8,max:50 }).run(req);
+    await check('confirmPassword').isLength({ min: 8, max: 50 }).run(req);
+
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array()  });
+    }
     const { name, email, password, confirmPassword } = req.body;
     if(password!=confirmPassword){
         return res.status(400).json({ msg: 'Password and Confirm Password do not match' });
@@ -40,7 +53,14 @@ export const registerUser =async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+                res.cookie('auth_token', token, {
+                    httpOnly: true, // Server-only cookie
+                    secure: true, // Only transmit over HTTPS
+                    sameSite: 'strict', // Only allow same-site requests
+                    maxAge: 3600000, // Cookie expires in 1 hour
+                });
+                res.json({ message: 'Registered!, Logged in successfully' });
+                next()
             }
         );
     } catch (err) {
@@ -51,6 +71,16 @@ export const registerUser =async (req, res) => {
 
 
 export const loginUser = async (req, res,next) => {
+
+    await check('email').isEmail().run(req);
+    await check('password').isLength({ min: 8, max: 50 }).run(req);
+
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+
     const { email, password } = req.body;
     try {
         let user = await User.findOne({ email });
@@ -75,13 +105,13 @@ export const loginUser = async (req, res,next) => {
             { expiresIn: 360000 },
             (err, token) => {
                 if (err) throw err;
-
-                res.status(201).json({
-                    message: "User logged in successfully", success: true, data: {
-                        userId: user._id,
-                        userEmail: user.email,
-                        token,
-                    }});
+                res.cookie('auth_token', token, {
+                    httpOnly: true, // Server-only cookie
+                    secure: true, // Only transmit over HTTPS
+                    sameSite: 'strict', // Only allow same-site requests
+                    maxAge: 3600000, // Cookie expires in 1 hour
+                });
+                res.json({ message: 'Logged in successfully' });
                 next()
             }
         );
@@ -123,6 +153,11 @@ export const getUserById = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
+    const userId=req.user;
+    const { id } = req.params;
+    if (userId != id){
+        res.status(401).json({ msg: "Bad Request" });
+    }else{
     uploadProfileImage.single('profileImg')(req, res, async (err) => {
         if (err) {
             res.status(404).json({ message: err });
@@ -153,6 +188,14 @@ export const updateUser = async (req, res) => {
             }
         }
     });
+}
 };
 
-
+export const logoutUser= async (req,res)=>{
+    try {
+        res.clearCookie('auth_token');
+        res.status(200).json({ msg: 'Logged out successfully' });
+    } catch (error) {
+        res.status(500).json({ msg: 'Error logging out' });
+    }
+}

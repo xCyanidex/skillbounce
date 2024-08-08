@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "../backend/routes/users.js"
+import adminRoutes from "../backend/routes/admin.js"
+
 
 dotenv.config();
 
@@ -17,6 +19,7 @@ app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 
 
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('MongoDB connected'))
@@ -26,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Define Routes
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 
 

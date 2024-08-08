@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    profile_img: {
+    imageUrl: {
         type: String,
         max: 100
     },

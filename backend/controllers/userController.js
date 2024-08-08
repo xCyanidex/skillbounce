@@ -1,6 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import {uploadProfileImage} from "../config/multer-config.js"
+import mongoose from 'mongoose';
+import { deleteFile } from '../utils/fileDelete.js';
 
 export const registerUser =async (req, res) => {
     const { name, email, password, confirmPassword } = req.body;
@@ -119,21 +122,37 @@ export const getUserById = async (req, res) => {
     }
 };
 
-export const updateUser=async (req,res)=>{
-    const {id}=req.params;
-    try {
-        if (id) {
-            const user = await User.findById(id);
-            if (!user) {
-                res.status(404).json({ message: 'No user found' });
-            } else {
-                res.status(200).json(user);
-            }
+export const updateUser = async (req, res) => {
+    uploadProfileImage.single('profileImg')(req, res, async (err) => {
+        if (err) {
+            res.status(404).json({ message: err });
         } else {
-            res.status(400).json({ message: 'User ID is required' });
+            const { file } = req;
+            const { id } = req.params;
+            const { name, skills, categories, bio, city, location, phone } = req.body;
+            const categoriesObjectId = categories.map(category => mongoose.Types.ObjectId.createFromHexString(category));
+            if (!name || !skills || !categoriesObjectId || !bio || !file || !city || !location || !phone) {
+                res.status(400).json({ message: 'Please provide all the details' });
+                return;
+            }
+            try {
+                if (id) {
+                    const user = await User.findById(id);
+                    if (user) {
+                        deleteFile(user.imageUrl)
+                        const updatedUser = await User.findByIdAndUpdate(id, { ...req.body, imageUrl: file.filename }, { new: true });
+                        res.status(200).json(updatedUser);
+                    } else {
+                        res.status(404).json({ message: 'No user found' });
+                    }
+                } else {
+                    res.status(400).json({ message: 'User ID is required' });
+                }
+            } catch (error) {
+                res.status(500).send({ message: 'Server error', error: error.message });
+            }
         }
-    } catch (error) {
-        res.status(500).send({ message: 'Server error', error: error.message });
-    }
+    });
+};
 
-}
+

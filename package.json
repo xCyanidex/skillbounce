@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon backend/server.js",
-    "seed":"node backend/seeders/seeder.js",
-    "delete":"node backend/seeders/delete.js"
+    "dev": "nodemon backend/server.js",
+    "seed": "node backend/seeders/seeder.js",
+    "delete": "node backend/seeders/delete.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +20,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
+    "multer": "^1.4.5-lts.1",
     "react-router-dom": "^6.26.0"
   },
   "keywords": [],

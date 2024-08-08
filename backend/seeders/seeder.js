@@ -22,7 +22,10 @@ const users = [
         skills: ['JavaScript', 'Python'],
         requests: [],
         categories: [],
-        imageUrl: 'https://example.com/john-doe.jpg'
+        imageUrl: 'https://example.com/john-doe.jpg',
+        city:'Lahore',
+        location:'Pakistan',
+        phone:'123456'
     },
     {
         name: 'Jane Doe',
@@ -31,7 +34,10 @@ const users = [
         skills: ['UI/UX Design', 'Copywriting'],
         requests: [],
         categories: [],
-        imageUrl: 'https://example.com/jane-doe.jpg'
+        imageUrl: 'https://example.com/jane-doe.jpg',
+        city: 'Lahore',
+        location: 'Pakistan',
+        phone: '123456'
     },
     {
         name: 'Bob Smith',
@@ -40,7 +46,10 @@ const users = [
         skills: ['Python', 'Data Science'],
         requests: [],
         categories: [],
-        imageUrl: 'https://example.com/bob-smith.jpg'
+        imageUrl: 'https://example.com/bob-smith.jpg',
+        city: 'Lahore',
+        location: 'Pakistan',
+        phone: '123456'
     }
 ];
 
@@ -116,7 +125,6 @@ async function seed() {
         comment: 'Excellent service!'
     });
 
-   const reviewIds= await Review.insertMany(reviews);
 
 
     await User.updateMany({}, { $set: { reviews: categoryIds.slice(0, 2) } });

@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const ReviewSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // user who wrote the review
-    requestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Request' }, // request being reviewed
+    serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service' }, // service being reviewed
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // user leaving the review
     rating: { type: Number, min: 1, max: 5 }, // rating (1-5)
-    comment: String, // review comment
+    comment: String, 
     createdAt: Date,
     updatedAt: Date
 });

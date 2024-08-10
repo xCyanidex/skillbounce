@@ -1,9 +1,15 @@
-import mongoose from 'mongoose';
 import Blocked from '../models/BlockedUsers.js';
 import User from '../models/User.js';
 
 
 export const deleteUser = async (req, res) => {
+
+    await check('id').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
     const { id } = req.body;
     try {
         const deletedUser = await User.findByIdAndDelete({ _id: id })
@@ -18,6 +24,16 @@ export const deleteUser = async (req, res) => {
 }
 
 export const blockUser = async (req, res) => {
+
+    await check('blocked_by').run(req);
+    await check('block_reason').run(req);
+    await check('blocked_by').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+
     const { blockId, block_reason, blocked_by } = req.body;
     const block_status = true;
     const block_date = Date.now();

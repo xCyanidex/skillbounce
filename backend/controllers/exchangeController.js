@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { check, validationResult } from 'express-validator';
 import ServiceExchange from '../models/ServiceExchange.js';
 import Service from '../models/Service.js';
+import User from "../models/User.js"
 
 export const createExchange=async (req,res)=>{
 
@@ -64,3 +65,114 @@ export const updateExchangeStatus=async (req,res)=>{
         return res.status(400).json({ msg: "Internal Server error" });
     }
 }
+
+export const deleteExchange=async (req,res)=>{
+    await check('exchangeId').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+
+    const { exchangeId } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(exchangeId)) {
+        return res.status(400).json({ error: 'Exchange ID is invalid' });
+    }
+
+    try {
+        await ServiceExchange.findByIdAndDelete(exchangeId);
+        return res.status(200).json({ msg: "Exchange deleted successfully" });
+    } catch (error) {
+        return res.status(400).json({ msg: "Internal Server error" });
+    }
+
+}
+
+
+
+export const acceptExchangeOffer=async (req,res)=>{
+    await check('serviceOwnerId').run(req);
+    await check('exchangerId').run(req);
+    await check('exchangeId').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+
+    const { serviceOwnerId, exchangerId, exchangeId }=req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(serviceOwnerId) || !mongoose.Types.ObjectId.isValid(exchangerId) || !mongoose.Types.ObjectId.isValid(exchangeId)) {
+        return res.status(400).json({ error: 'Exchange ID is invalid' });
+    }
+
+    try {
+
+            const exchanger = await User.findById(exchangerId);
+            const serviceOwner = await User.findById(serviceOwnerId);
+            const exchange = await ServiceExchange.findById(exchangeId);
+            const serviceId = exchange.serviceId;
+            const service = await Service.findById(serviceId);
+            if (!(service && service.status == "active")) {
+               return res.status(401).json({ msg: "Service is not active anymore." })
+            }
+
+            if (!exchanger || !serviceOwner || !exchange) {
+                return  res.status(401).json({ msg: "Invalid request." })
+            }
+
+            const latestExchangerPoints = exchanger.points;
+
+            const exchangeOfferedPoints = exchange.pointsOffered;
+
+            if (latestExchangerPoints < exchangeOfferedPoints) {
+                throw new Error('Insufficient points');
+            }
+
+            await Promise.all([
+                User.findByIdAndUpdate(exchangerId, { $inc: { points: -exchangeOfferedPoints } }),
+                User.findByIdAndUpdate(serviceOwnerId, { $inc: { points: +exchangeOfferedPoints } }),
+                ServiceExchange.findByIdAndUpdate(exchangeId, { status: 'accepted' }),
+            ]);
+       return res.status(200).json({ msg: 'Exchange offer accepted' });
+    } catch (error) {
+        console.log(error)
+      return  res.status(500).json({ msg: 'Error accepting exchange offer' });
+    }
+}
+
+export const completeExchange=async (req,res)=>{
+
+    await check('exchangeId').run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ Invalid_Input_error: errors.array() });
+    }
+const {exchangeId}=req.body;
+    const exchange = await ServiceExchange.findById(exchangeId);
+
+    if (!mongoose.Types.ObjectId.isValid(exchangeId)) {
+        return res.status(400).json({ error: 'Exchange ID is invalid' });
+    }
+
+    try {
+        if (exchange) {
+            const serviceId = exchange.serviceId;
+            const exchangerId = exchange.userId;
+            await ServiceExchange.findByIdAndUpdate(exchangeId, { status: "completed" });
+            await Service.findByIdAndUpdate(serviceId, { $addToSet: { exchanges: exchangeId } })
+            await Service.findByIdAndUpdate(serviceId, { $addToSet: { reviewableBy: exchangerId } })
+            return res.status(200).json({ msg: "Exchange completed successfully." })
+        } else {
+            return res.status(401).json({ msg: "No Exchange found of that ID." })
+        }
+    } catch (error) {
+        return res.status(500).json({ msg: "Internal Server Error" })
+    }
+
+}
+
+
+

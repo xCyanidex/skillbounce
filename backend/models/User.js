@@ -34,7 +34,9 @@ const UserSchema = new mongoose.Schema({
         max: 100
     },
     points: {
-        type: Number
+        type: Number,
+        required:true,
+        default:0,
     },
     skills: [{
         type: String

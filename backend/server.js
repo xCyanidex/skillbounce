@@ -35,7 +35,8 @@ mongoose.connect(process.env.MONGO_URI)
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/service',serviceRoutes);
-app.use('/api/exchange',exchangeRoutes)
+app.use('/api/exchange',exchangeRoutes);
+
 
 
 

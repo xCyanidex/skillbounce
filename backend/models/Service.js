@@ -11,7 +11,10 @@ const ServiceSchema = new mongoose.Schema({
     reviewedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // users who have reviewed this service
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }], // array of review IDs
     createdAt: Date,
-    updatedAt: Date
+    updatedAt: Date,
+    exchanges:[{
+        type: mongoose.Schema.Types.ObjectId, ref: 'ServiceExchange'
+    }]
 });
 
 

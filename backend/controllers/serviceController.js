@@ -42,11 +42,10 @@ export const updateService=async (req,res)=>{
     if (!errors.isEmpty()) {
         return res.status(400).json({ Invalid_Input_error: errors.array() });
     }
-    const updatedAt = new Date().toISOString();
-
-  
-
+ 
     const { serviceId,skills, description, location, pointsRequired,status } = req.body;
+
+    const updatedAt = new Date().toISOString();
 
     if (!mongoose.Types.ObjectId.isValid(serviceId)) {
         return res.status(400).json({ error: 'Invalid service ID' });
@@ -54,9 +53,9 @@ export const updateService=async (req,res)=>{
 
     try {
         const updatedService = await Service.findByIdAndUpdate(serviceId ,{ skills, description, location, pointsRequired, status, updatedAt }, { new: true })
-        res.status(200).json({msg:"Service Updated Successfully."});
+      return  res.status(200).json({msg:"Service Updated Successfully."});
     } catch (error) {
-        res.status(500).json({ msg: "Internal Server Error" });
+       return res.status(500).json({ msg: "Internal Server Error" });
     }
 }
 

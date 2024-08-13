@@ -6,9 +6,9 @@ import { userProtect } from '../middleware/user.js';
 const router=express.Router();
 
 
-router.post('/create',userProtect, createService)
+router.post('/create', createService)
 
-router.post('/update',userProtect,updateService);
+router.post('/update',updateService);
 
 router.delete('/delete',deleteService)
 

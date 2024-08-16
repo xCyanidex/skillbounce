@@ -16,6 +16,11 @@ export const createService = async (req, res) => {
     }
 
     const { userId, skills, description, location, pointsRequired } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
     const status = "inactive";
     const createdAt = new Date().toISOString();
     const updatedAt = new Date().toISOString();

@@ -6,11 +6,11 @@ import { userProtect } from '../middleware/user.js';
 const router=express.Router();
 
 
-router.post('/create', createService)
+router.post('/create',userProtect, createService)
 
-router.post('/update',updateService);
+router.post('/update',userProtect,updateService);
 
-router.delete('/delete',deleteService)
+router.delete('/delete',userProtect,deleteService)
 
 
 export default router;

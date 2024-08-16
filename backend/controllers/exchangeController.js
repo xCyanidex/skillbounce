@@ -163,7 +163,7 @@ const {exchangeId}=req.body;
             const exchangerId = exchange.userId;
             await ServiceExchange.findByIdAndUpdate(exchangeId, { status: "completed" });
             await Service.findByIdAndUpdate(serviceId, { $addToSet: { exchanges: exchangeId } })
-            await Service.findByIdAndUpdate(serviceId, { $addToSet: { reviewableBy: exchangerId } })
+            await Service.findByIdAndUpdate(serviceId, { $addToSet: { reviewableBy: exchangeId   } })
             return res.status(200).json({ msg: "Exchange completed successfully." })
         } else {
             return res.status(401).json({ msg: "No Exchange found of that ID." })

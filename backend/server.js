@@ -7,6 +7,7 @@ import userRoutes from "../backend/routes/users.js"
 import adminRoutes from "../backend/routes/admin.js"
 import serviceRoutes from "../backend/routes/service.js"
 import exchangeRoutes from "../backend/routes/exchange.js"
+import reviewRoutes from "../backend/routes/review.js"
 import rate_limiter from "./utils/rateLimiter.js";
 
 
@@ -36,6 +37,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/service',serviceRoutes);
 app.use('/api/exchange',exchangeRoutes);
+app.use('/api/review', reviewRoutes);
 
 
 

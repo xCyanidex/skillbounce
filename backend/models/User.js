@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         max: 100
     },
+    title: {
+        type: String,
+        required:true,
+    },
     password: {
         type: String,
         required: true,
@@ -35,8 +39,8 @@ const UserSchema = new mongoose.Schema({
     },
     points: {
         type: Number,
-        required:true,
-        default:0,
+        required: true,
+        default: 0,
     },
     skills: [{
         type: String
@@ -50,13 +54,13 @@ const UserSchema = new mongoose.Schema({
         ref: 'Review'
     }],
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
-    location:{
-        type:String,
-        max:100
+    location: {
+        type: String,
+        max: 100
     },
-    phone:{
-        type:String,
-        max:25,
+    phone: {
+        type: String,
+        max: 25,
     }
 });
 

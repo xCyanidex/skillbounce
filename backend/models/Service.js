@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const ServiceSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // user offering the service
+    title:{type:String},
     skills: [{type:String}], // skill/service offered
     description: {type:String,max:500,min:1}, // description of the service
     location: {type:String,min:1,max:20}, // location of the service

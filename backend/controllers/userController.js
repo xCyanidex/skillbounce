@@ -8,6 +8,7 @@ import { deleteFile } from '../utils/fileDelete.js';
 
 export const registerUser =async (req, res) => {
   
+    
 
     await check('name').isLength({ min: 5,max:10 }).run(req);
     await check('email').isEmail().run(req);

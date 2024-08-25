@@ -158,6 +158,7 @@ const {exchangeId}=req.body;
     }
 
     try {
+        const session = await mongoose.startSession();
         if (exchange) {
             const serviceId = exchange.serviceId;
             const exchangerId = exchange.userId;

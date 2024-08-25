@@ -4,6 +4,8 @@ import SignUp from "@/containers/SignUp"
 import AuthLayout from "@/layouts/AuthLayout";
 import MainLayout from "@/layouts/MainLayout";
 import Services from "@/pages/Services";
+import ServiceDetail from "@/pages/ServiceDetail";
+import ServiceChatBox from "@/components/ServiceChatBox";
 
 const routes = [
   {
@@ -24,6 +26,16 @@ const routes = [
   {
     path: "/services",
     element: <Services />,
+    layout: MainLayout,
+  },
+  {
+    path: "/service/:serviceId",
+    element: <ServiceDetail />,
+    layout: MainLayout,
+  },
+  {
+    path: "/service/chat/:serviceId",
+    element: <ServiceChatBox />,
     layout: MainLayout,
   },
 ];

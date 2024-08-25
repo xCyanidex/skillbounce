@@ -12,6 +12,6 @@ router.put('/state-update', userProtect, updateExchangeStatus)
 router.delete('/delete', userProtect, deleteExchange);
 router.post('/accept', userProtect, acceptExchangeOffer)
 router.post('/complete', userProtect, completeExchange)
-
+    
 
 export default router;
